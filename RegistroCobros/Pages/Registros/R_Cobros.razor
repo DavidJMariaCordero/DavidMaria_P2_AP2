@@ -14,11 +14,16 @@
             <div class="form-group">
                 <label>Id</label>
                 <div class="input-group">
-                    <InputNumber @bind-Value="CobroId" class="form-control "/>
+                    <InputNumber @bind-Value="CobroId" class="form-control " />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-warning" @onclick="Buscar">
+                            <i class="oi oi-magnifying-glass mr-1" />Buscar
+                        </button>
+                    </div>
                     <div class="input-group-append">
                         <label>Fecha</label>
                         <div class="input-group-append">
-                            <InputDate id="fecha" @bind-Value="Cobro.Fecha" class="form-control" />
+                            <InputDate @bind-Value="Cobro.Fecha" class="form-control" />
                         </div>
                         <div><ValidationMessage For="@(() => Cobro.Fecha)" /></div>
                     </div>
@@ -28,14 +33,14 @@
             <div class="form-group">
                 <label>Cliente</label>
                 <div class="input-group">
-                    <InputSelect class="form-control" @bind-Value="Cobro.SuplidorId">
+                    <InputSelect class="form-control" @bind-Value="Cobro.ClienteId" @onclick="(()=> BuscarVentas(Cobro.ClienteId))">
                         @foreach (var cliente in ListaClientes)
                         {
-                            <option value="@cliente.ClienteId">@cliente.ClienteId  @cliente.Cliente.Nombres</option>
+                            <option value="@cliente.ClienteId">@cliente.Nombres</option>
                         }
                     </InputSelect>
                 </div>
-                <div><ValidationMessage For="@(() => Cobro.SuplidorId)" /></div>
+                <div><ValidationMessage For="@(() => Cobro.ClienteId)" /></div>
             </div>
 
             <div class="card" style=" border-width: 3px">
@@ -59,7 +64,7 @@
                                 @foreach (var cobro in Cobro.Detalle)
                                  {
                                     <tr>
-                                        <td>@cobro.CobroId</td>
+                                        <td>@cobro.Id</td>
                                         <td>@cobro.Fecha</td>
                                         <td>@cobro.Monto</td>
                                         <td>@cobro.Balance</td>
@@ -86,7 +91,7 @@
         </div>
         <div>
             <label>Observaciones</label>
-            <InputTextArea class="form-control" rows="3"></InputTextArea>
+            <InputTextArea class="form-control" @bind-Value="Cobro.Observaciones"></InputTextArea>
         </div>
 
         <div class="card-footer">
@@ -114,6 +119,76 @@
 </EditForm>
 
 @code {
-    
+    private int CobroId { get; set; }
+    private Cobros Cobro { get; set; } = new Cobros();
+    public List<Clientes> ListaClientes { get; set; } = ClientesBLL.GetList(c => true);
+    public List<Ventas> ListaVentas { get; set; }
+    public List<CobrosDetalle> Detalle { get; set; }
+
+    private void Buscar()
+    {
+        if (Cobro.CobroId > 0)
+        {
+            var encontrado = CobrosBLL.Buscar(CobroId);
+
+            if (encontrado != null)
+                this.Cobro = encontrado;
+            else
+                toastService.ShowWarning("No encontrado");
+        }
+    }
+
+    private void Limpiar()
+    {
+        CobroId = 0;
+        Cobro = new Cobros();
+        ListaClientes = ClientesBLL.GetList(c => true);
+    }
+
+    public void Guardar()
+    {
+        bool guardo = true;
+
+        guardo = CobrosBLL.Guardar(Cobro);
+
+        if (guardo)
+        {
+            Limpiar();
+            toastService.ShowSuccess("Guardado correctamente");
+        }
+        else
+            toastService.ShowError("No fue posible guardar");
+    }
+
+    public void Eliminar()
+    {
+        bool elimino;
+
+        elimino = CobrosBLL.Eliminar(Cobro.CobroId);
+
+        if (elimino)
+        {
+            Limpiar();
+            toastService.ShowSuccess("Eliminado correctamente");
+        }
+        else
+            toastService.ShowError("No fue posible eliminar");
+    }
+
+    private void BuscarVentas(int ClienteId)
+    {
+        ListaVentas = VentasBLL.GetList(v => v.ClienteId == ClienteId);
+        Cobro.Detalle.Clear();
+        foreach (var venta in ListaVentas)
+        {
+            Cobro.Detalle.Add(new CobrosDetalle{
+                Id = venta.VentaId,
+                Balance = venta.Balance,
+                Fecha = venta.Fecha,
+                Monto = venta.Monto
+            }
+            );
+        }
+    }
 
 }
