@@ -11,5 +11,7 @@ namespace RegistroCobros.Models
         [Key]
         public int ClienteId { get; set; }
         public string Nombres { get; set; }
+
+        //HOLA HOLA HOLA
     }
 }
