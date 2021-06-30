@@ -1,0 +1,89 @@
+﻿@page "/C_Clientes"
+
+
+<div>
+
+    <div class="card-header">
+        <h3>Consulta de Clientes</h3>
+    </div>
+
+    <div class="card-body">
+        <form>
+
+            <div class="input-group">
+                <select class="form-control col-4" @bind="Filtro">
+                    <option value="0">Filtro</option>
+                    <option value="1">Id</option>
+                    <option value="2">Nombres</option>
+                </select>
+                <input type="text" class="form-control" @bind="Criterio" placeholder="Criterio" />
+                <button class="btn btn-warning" type="button" @onclick="Buscar">
+                    <i class="oi oi-magnifying-glass mr-1" />Buscar
+                </button>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombres</th>
+                    </tr>
+                </thead>
+                <tbody class="text-dark">
+                    @foreach (var cliente in ListaClientes)
+                    {
+                        <tr>
+                            <td>@cliente.ClienteId</td>
+                            <td>@cliente.Nombres</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </form>
+
+    </div>
+
+</div>
+
+
+@code {
+    public List<Clientes> ListaClientes { get; set; }
+    public string Filtro { get; set; }
+    public string Criterio { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+    }
+
+    private void Nuevo()
+    {
+        ListaClientes = new List<Clientes>();
+        Filtro = "0";
+        Criterio = string.Empty;
+    }
+
+    private void Buscar()
+    {
+        ListaClientes = new List<Clientes>();
+
+        if (Criterio.Length > 0)
+        {
+            switch (Filtro)
+            {
+                case "0":
+                    ListaClientes = ClientesBLL.GetList(c => true);
+                    break;
+                case "1":
+                    ListaClientes = ClientesBLL.GetList(c => c.ClienteId == Convert.ToInt32(Criterio));
+                    break;
+                case "2":
+                    ListaClientes = ClientesBLL.GetList(c => c.Nombres.Contains(Criterio));
+                    break;
+            }
+        }
+        else
+            ListaClientes = ClientesBLL.GetList(p => true);
+
+    }
+}

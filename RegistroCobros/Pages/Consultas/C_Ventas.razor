@@ -1,0 +1,108 @@
+﻿@page "/C_Ventas"
+
+
+
+<div>
+
+    <div class="card-header">
+        <h3>Consulta de Ventas</h3>
+    </div>
+
+    <div class="card-body">
+        <form>
+
+            <div class="input-group">
+                <select class="form-control col-4" @bind="Filtro">
+                    <option value="0">Filtro</option>
+                    <option value="1">VentaId</option>
+                    <option value="2">ClienteId</option>
+                    <option value="3">Monto</option>
+                    <option value="4">Balance</option>
+                    <option value="5">Fecha</option>
+                </select>
+                <input type="text" class="form-control" @bind="Criterio" placeholder="Criterio" />
+                <button class="btn btn-warning" type="button" @onclick="Buscar">
+                    <i class="oi oi-magnifying-glass mr-1" />Buscar
+                </button>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>VentaId</th>
+                        <th>ClienteId</th>
+                        <th>Monto</th>
+                        <th>Balance</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody class="text-dark">
+                    @foreach (var venta in ListaVentas)
+                     {
+                        <tr>
+                            <td>@venta.VentaId</td>
+                            <td>@venta.ClienteId</td>
+                            <td>@venta.Monto</td>
+                            <td>@venta.Balance</td>
+                            <td>@venta.Fecha</td>
+                        </tr>
+                     }
+                </tbody>
+            </table>
+        </form>
+
+    </div>
+
+</div>
+
+
+@code {
+    public List<Ventas> ListaVentas { get; set; }
+    public string Filtro { get; set; }
+    public string Criterio { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+    }
+
+    private void Nuevo()
+    {
+        ListaVentas = new List<Ventas>();
+        Filtro = "0";
+        Criterio = string.Empty;
+    }
+
+    private void Buscar()
+    {
+        ListaVentas = new List<Ventas>();
+
+        if (Criterio.Length > 0)
+        {
+            switch (Filtro)
+            {
+                case "0":
+                    ListaVentas = VentasBLL.GetList(v => true);
+                    break;
+                case "1":
+                    ListaVentas = VentasBLL.GetList(v => v.VentaId == Convert.ToInt32(Criterio));
+                    break;
+                case "2":
+                    ListaVentas = VentasBLL.GetList(v => v.ClienteId == Convert.ToInt32(Criterio));
+                    break;
+                case "3":
+                    ListaVentas = VentasBLL.GetList(v => v.Monto == Convert.ToDouble(Criterio));
+                    break;
+                case "4":
+                    ListaVentas = VentasBLL.GetList(v => v.Balance == Convert.ToDouble(Criterio));
+                    break;
+                    //case "2":
+                    //  ListaVentas.Add(VentasBLL.Buscar(Convert.ToInt32(Criterio), 0));
+                    //break;
+            }
+        }
+        else
+            ListaVentas = VentasBLL.GetList(v => true);
+
+    }
+}
