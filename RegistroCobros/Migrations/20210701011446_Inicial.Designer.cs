@@ -9,7 +9,7 @@ using RegistroCobros.DAL;
 namespace RegistroCobros.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20210701001305_Inicial")]
+    [Migration("20210701011446_Inicial")]
     partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

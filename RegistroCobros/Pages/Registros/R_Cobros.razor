@@ -201,7 +201,7 @@
             if (venta.VentaId == id) {
                 Cobro.Detalle.Add(new CobrosDetalle
                 {
-                    VentaId = venta.Id,
+                    VentaId = venta.VentaId,
                     Balance = venta.Balance,
                     Fecha = venta.Fecha,
                     Monto = venta.Monto,
@@ -214,7 +214,7 @@
             {
                 Cobro.Detalle.Add(new CobrosDetalle
                 {
-                    VentaId = venta.Id,
+                    VentaId = venta.VentaId,
                     Balance = venta.Balance,
                     Fecha = venta.Fecha,
                     Monto = venta.Monto,

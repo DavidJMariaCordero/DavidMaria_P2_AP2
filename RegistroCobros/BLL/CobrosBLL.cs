@@ -24,14 +24,14 @@ namespace RegistroCobros.BLL
             Contexto contexto = new Contexto();
             try
             {
-                contexto.Cobros.Add(cobro);
+                
                 foreach (var item in cobro.Detalle)
                 {
-                    Ventas venta = VentasBLL.Buscar(item.VentaId);
-                    venta.Balance -= (double)item.Cobrado;
+                    Ventas venta = contexto.Ventas.Find(item.VentaId);
+                    venta.Balance = item.Monto - item.Cobrado;
                     contexto.Entry(venta).State = EntityState.Modified;
                 }
-                
+                contexto.Cobros.Add(cobro);
                 paso = contexto.SaveChanges() > 0;
             }
             catch (Exception)
