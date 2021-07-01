@@ -71,8 +71,8 @@
                                         <td>@cobro.Cobrado</td>
 
 
-                                        <td>
-                                            <input class="form-check-input" type="checkbox">
+                                        <td>                           
+                                           <input class="form-check-input" type="checkbox" @onchange="eventArgs => {Pago(Convert.ToBoolean(eventArgs.Value), cobro.VentaId); }" >
                                         </td>
                                     </tr>
                                  }
@@ -182,12 +182,47 @@
         foreach (var venta in ListaVentas)
         {
             Cobro.Detalle.Add(new CobrosDetalle{
-                Id = venta.VentaId,
+                VentaId = venta.VentaId,
                 Balance = venta.Balance,
                 Fecha = venta.Fecha,
                 Monto = venta.Monto
             }
             );
+        }
+    }
+
+    private void Pago(bool pago, int id)
+    {
+        Detalle = Cobro.Detalle.ToList();
+        Cobro.Detalle.Clear();
+
+        foreach (var venta in Detalle)
+        {
+            if (venta.VentaId == id) {
+                Cobro.Detalle.Add(new CobrosDetalle
+                {
+                    VentaId = venta.Id,
+                    Balance = venta.Balance,
+                    Fecha = venta.Fecha,
+                    Monto = venta.Monto,
+                    Cobrado = venta.Balance,
+                    Pagado = pago
+                }
+                );
+            }
+            else
+            {
+                Cobro.Detalle.Add(new CobrosDetalle
+                {
+                    VentaId = venta.Id,
+                    Balance = venta.Balance,
+                    Fecha = venta.Fecha,
+                    Monto = venta.Monto,
+                    Pagado = pago
+                }
+            );
+            }
+
         }
     }
 

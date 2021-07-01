@@ -10,6 +10,7 @@ namespace RegistroCobros.Models
     {
         [Key]
         public int Id { get; set; }
+        public int VentaId { get; set; }
         public DateTime Fecha { get; set; }
         public double Monto { get; set; }
         public double Balance { get; set; }

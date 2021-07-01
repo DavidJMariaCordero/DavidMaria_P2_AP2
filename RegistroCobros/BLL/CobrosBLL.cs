@@ -25,6 +25,13 @@ namespace RegistroCobros.BLL
             try
             {
                 contexto.Cobros.Add(cobro);
+                foreach (var item in cobro.Detalle)
+                {
+                    Ventas venta = VentasBLL.Buscar(item.VentaId);
+                    venta.Balance -= (double)item.Cobrado;
+                    contexto.Entry(venta).State = EntityState.Modified;
+                }
+                
                 paso = contexto.SaveChanges() > 0;
             }
             catch (Exception)

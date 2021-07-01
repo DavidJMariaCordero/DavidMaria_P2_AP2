@@ -11,7 +11,25 @@ namespace RegistroCobros.BLL
 {
     public class VentasBLL
     {
+        public static Ventas Buscar(int id)
+        {
+            Contexto contexto = new Contexto();
+            Ventas venta = new Ventas();
 
+            try
+            {
+                venta = contexto.Ventas.Find(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                contexto.Dispose();
+            }
+            return venta;
+        }
         public static List<Ventas> GetList(Expression<Func<Ventas, bool>> criterio)
         {
             List<Ventas> lista = new List<Ventas>();
