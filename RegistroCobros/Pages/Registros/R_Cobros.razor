@@ -139,8 +139,14 @@
         {
             var encontrado = CobrosBLL.Buscar(CobroId);
 
-            if (encontrado != null)
+            if (encontrado != null) {
                 this.Cobro = encontrado;
+                foreach (var item in Cobro.Detalle)
+                {
+                    if (item.Pagado)
+                        Totales++;
+                }
+            }
             else
                 toastService.ShowWarning("No encontrado");
         }
@@ -208,7 +214,7 @@
 
         foreach (var venta in Detalle)
         {
-            if (venta.VentaId == id) {
+            if (venta.VentaId == id ) {
                 Cobro.Detalle.Add(new CobrosDetalle
                 {
                     VentaId = venta.VentaId,
@@ -230,7 +236,8 @@
                     Balance = venta.Balance,
                     Fecha = venta.Fecha,
                     Monto = venta.Monto,
-                    Pagado = false
+                    Cobrado = venta.Cobrado,
+                    Pagado = venta.Pagado
                 }
             );
             }
