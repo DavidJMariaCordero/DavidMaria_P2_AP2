@@ -72,10 +72,17 @@
 
 
                                         <td>                           
-                                           <input class="form-check-input" type="checkbox" @onchange="eventArgs => {Pago(Convert.ToBoolean(eventArgs.Value), cobro.VentaId); }" >
+                                            @if (cobro.Pagado) 
+                                             { 
+                                                <input class="form-check-input" type="checkbox" checked @onchange="eventArgs => {Pago(Convert.ToBoolean(eventArgs.Value), cobro.VentaId); }" >
+                                             }
+                                            else 
+                                             {
+                                                <input class="form-check-input" type="checkbox"  @onchange="eventArgs => {Pago(Convert.ToBoolean(eventArgs.Value), cobro.VentaId); }">
+                                             }
                                         </td>
                                     </tr>
-                                 }
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -87,7 +94,7 @@
 
         <div>
             <label class="text-dark font-weight-bolder">Totales: </label>
-            <label class="text-dark font-weight-bolder"> 500 </label>
+            <InputNumber @bind-Value="Totales" readonly ="true"/>
         </div>
         <div>
             <label>Observaciones</label>
@@ -119,15 +126,16 @@
 </EditForm>
 
 @code {
-    private int CobroId { get; set; }
+    public int CobroId { get; set; }
     private Cobros Cobro { get; set; } = new Cobros();
     public List<Clientes> ListaClientes { get; set; } = ClientesBLL.GetList(c => true);
     public List<Ventas> ListaVentas { get; set; }
     public List<CobrosDetalle> Detalle { get; set; }
+    public int Totales = 0;
 
     private void Buscar()
     {
-        if (Cobro.CobroId > 0)
+        if (CobroId > 0)
         {
             var encontrado = CobrosBLL.Buscar(CobroId);
 
@@ -143,6 +151,7 @@
         CobroId = 0;
         Cobro = new Cobros();
         ListaClientes = ClientesBLL.GetList(c => true);
+        Totales = 0;
     }
 
     public void Guardar()
@@ -188,6 +197,7 @@
                 Monto = venta.Monto
             }
             );
+
         }
     }
 
@@ -209,6 +219,8 @@
                     Pagado = pago
                 }
                 );
+                if (venta.Pagado)
+                    Totales += 1;
             }
             else
             {
@@ -218,7 +230,7 @@
                     Balance = venta.Balance,
                     Fecha = venta.Fecha,
                     Monto = venta.Monto,
-                    Pagado = pago
+                    Pagado = false
                 }
             );
             }
